@@ -21,6 +21,8 @@
   align-items: center;
   padding: 40px;
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
     h1 {
@@ -48,8 +50,7 @@
       opacity: 0.4;
     }
 
-    body::before {
-      content: '';
+    .overlay {
       position: fixed;
       top: 0;
       left: 0;
@@ -59,10 +60,11 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      opacity: 0.3;
-      mix-blend-mode: overlay;
+      background-attachment: fixed;
+      opacity: 0.4;
+      mix-blend-mode: screen;
       pointer-events: none;
-      z-index: -1;
+      z-index: 0;
     }
 
     .music-player {
@@ -124,6 +126,7 @@
   </style>
 </head>
 <body>
+  <div class="overlay"></div>
 
   <div class="music-player">
     <div class="player-controls">
@@ -138,7 +141,11 @@
     </div>
   </div>
 
-  <iframe id="scPlayer" width="100%" height="450" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fplaylists%2F1392371221&color=%23040508&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true" style="display: none;"></iframe>
+  <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A1392371221&color=%23040508&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+  <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
+    <a href="https://soundcloud.com/kissingflowers" title="shuilta" target="_blank" style="color: #cccccc; text-decoration: none;">shuilta</a> · 
+    <a href="https://soundcloud.com/kissingflowers/sets/ceremony" title="ceremony" target="_blank" style="color: #cccccc; text-decoration: none;">ceremony</a>
+  </div>
 
   <h1>digitaldump</h1>
   <p> seeking refuge in the confines of my room </p>
@@ -149,82 +156,3 @@
   </div>
 
   <script src="https://connect.soundcloud.com/sdk/sdk-3.3.2.js"></script>
-  <script>
-    let scWidget;
-    let isPlaying = false;
-    let scReady = false;
-
-    window.addEventListener('load', function() {
-      const iframe = document.getElementById('scPlayer');
-      scWidget = SC.Widget(iframe);
-
-      const playBtn = document.getElementById('playBtn');
-      const nextBtn = document.getElementById('nextBtn');
-      const prevBtn = document.getElementById('prevBtn');
-      const volumeControl = document.getElementById('volumeControl');
-
-      const savedVolume = sessionStorage.getItem('playerVolume');
-      if (savedVolume) {
-        volumeControl.value = savedVolume;
-      }
-
-      playBtn.addEventListener('click', () => {
-        if (scReady) {
-          scWidget.toggle();
-        }
-      });
-
-      scWidget.bind(SC.Widget.Events.READY, () => {
-        scReady = true;
-        console.log('SoundCloud widget ready');
-        
-        if (savedVolume) {
-          scWidget.setVolume(parseInt(savedVolume) * 100);
-        } else {
-          scWidget.setVolume(5000);
-        }
-
-        setTimeout(() => {
-          scWidget.play();
-          isPlaying = true;
-          playBtn.textContent = '⏸';
-        }, 500);
-
-        scWidget.bind(SC.Widget.Events.PLAY, () => {
-          isPlaying = true;
-          playBtn.textContent = '⏸';
-          sessionStorage.setItem('playerPlaying', 'true');
-        });
-
-        scWidget.bind(SC.Widget.Events.PAUSE, () => {
-          isPlaying = false;
-          playBtn.textContent = '▶';
-          sessionStorage.setItem('playerPlaying', 'false');
-        });
-
-        scWidget.bind(SC.Widget.Events.ERROR, () => {
-          console.error('SoundCloud widget error - check playlist URL');
-        });
-      });
-
-      nextBtn.addEventListener('click', () => {
-        if (scReady) {
-          scWidget.next();
-        }
-      });
-
-      prevBtn.addEventListener('click', () => {
-        if (scReady) {
-          scWidget.previous();
-        }
-      });
-
-      volumeControl.addEventListener('input', (e) => {
-        const volume = parseInt(e.target.value);
-        if (scReady) {
-          scWidget.setVolume(volume * 100);
-        }
-        sessionStorage.setItem('playerVolume', volume);
-      });
-    });
-  </script>
