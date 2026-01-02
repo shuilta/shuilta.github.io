@@ -59,19 +59,10 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      opacity: 0.4;
-      mix-blend-mode: screen;
+      opacity: 0.3;
+      mix-blend-mode: overlay;
       pointer-events: none;
-      z-index: 1;
-    }
-
-    body {
-      position: relative;
-    }
-
-    body > * {
-      position: relative;
-      z-index: 2;
+      z-index: -1;
     }
 
     .music-player {
@@ -147,7 +138,7 @@
     </div>
   </div>
 
-  <iframe id="scPlayer" width="100%" height="450" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/soundcloud%253Aplaylists%253A1392371221&color=%23040508&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true" style="display: none;"></iframe>
+  <iframe id="scPlayer" width="100%" height="450" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fplaylists%2F1392371221&color=%23040508&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true" style="display: none;"></iframe>
 
   <h1>digitaldump</h1>
   <p> seeking refuge in the confines of my room </p>
@@ -185,6 +176,7 @@
 
       scWidget.bind(SC.Widget.Events.READY, () => {
         scReady = true;
+        console.log('SoundCloud widget ready');
         
         if (savedVolume) {
           scWidget.setVolume(parseInt(savedVolume) * 100);
@@ -196,7 +188,7 @@
           scWidget.play();
           isPlaying = true;
           playBtn.textContent = '⏸';
-        }, 1000);
+        }, 500);
 
         scWidget.bind(SC.Widget.Events.PLAY, () => {
           isPlaying = true;
@@ -208,6 +200,10 @@
           isPlaying = false;
           playBtn.textContent = '▶';
           sessionStorage.setItem('playerPlaying', 'false');
+        });
+
+        scWidget.bind(SC.Widget.Events.ERROR, () => {
+          console.error('SoundCloud widget error - check playlist URL');
         });
       });
 
