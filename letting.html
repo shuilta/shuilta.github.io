@@ -49,9 +49,8 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-attachment: fixed;
       opacity: 0.4;
-      mix-blend-mode: screen;
+      mix-blend-mode: lighten;
       pointer-events: none;
       z-index: 9999;
     }
@@ -80,5 +79,15 @@
   </h1>
 
   <script src="https://connect.soundcloud.com/sdk/sdk-3.3.2.js"></script>
+  <script>
+    // Ensure overlay stays visible even after iframe loads
+    window.addEventListener('load', function() {
+      // Pseudo-element can't be accessed via JS, but ensure overlay is visible by reflow
+      document.body.style.opacity = '0.99';
+      setTimeout(() => {
+        document.body.style.opacity = '1';
+      }, 10);
+    });
+  </script>
 </body>
 </html>

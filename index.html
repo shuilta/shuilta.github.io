@@ -59,9 +59,8 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-attachment: fixed;
       opacity: 0.4;
-      mix-blend-mode: screen;
+      mix-blend-mode: lighten;
       pointer-events: none;
       z-index: 9999;
     }
@@ -132,3 +131,15 @@
   <div class="credit">
     @sp3lls
   </div>
+  <script>
+    // Ensure overlay stays visible even after iframe loads
+    window.addEventListener('load', function() {
+      const overlay = document.querySelector('.overlay');
+      if (overlay) {
+        overlay.style.display = 'block';
+        overlay.style.opacity = '0.4';
+      }
+    });
+  </script>
+</body>
+</html>
